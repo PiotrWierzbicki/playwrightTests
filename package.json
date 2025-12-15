@@ -4,13 +4,15 @@
   "description": "Playwright E2E tests for saucedemo.com using TypeScript and Page Object Model.",
   "scripts": {
     "test": "playwright test",
+    "test:api": "playwright test --project=api",
+    "test:e2e": "playwright test --project=chromium",
     "test:headed": "playwright test --headed",
     "test:ui": "playwright test --ui",
     "codegen": "playwright codegen https://www.saucedemo.com/",
     "start": "node app/server.js"
   },
   "devDependencies": {
-    "@playwright/test": "^1.48.0",
+    "@playwright/test": "^1.57.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.5.0"
   },

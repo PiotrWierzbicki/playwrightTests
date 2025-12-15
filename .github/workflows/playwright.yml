@@ -6,9 +6,49 @@ on:
   pull_request:
 
 jobs:
-  tests:
+  api-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      # stage: install
+      - name: Install dependencies
+        run: npm ci
+
+      # stage: test
+      - name: Run API tests
+        run: npm run test:api
+
+      # stage: report (optional, ale polecam)
+      - name: Upload API report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-api
+          path: playwright-report/
+          retention-days: 14
+
+      - name: Upload API test results (traces/screenshots)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-api
+          path: test-results/
+          retention-days: 14
+
+  ui-tests:
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    needs: api-tests
 
     strategy:
       fail-fast: false
@@ -25,29 +65,32 @@ jobs:
           node-version: 20
           cache: 'npm'
 
+      # stage: install
       - name: Install dependencies
         run: npm ci
 
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
 
-      - name: Run Playwright tests on ${{ matrix.project }}
+      # stage: test
+      - name: Run UI tests on ${{ matrix.project }}
         env:
           BASE_URL: https://www.saucedemo.com
         run: npx playwright test --project=${{ matrix.project }}
 
+      # stage: report
       - name: Upload HTML report (${{ matrix.project }})
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: playwright-report-${{ matrix.project }}
-          path: playwright-report
+          path: playwright-report/
           retention-days: 14
 
-      - name: Upload test results (traces/screenshots) 
+      - name: Upload test results (${{ matrix.project }})
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: test-results
+          name: test-results-${{ matrix.project }}
           path: test-results/
           retention-days: 14
