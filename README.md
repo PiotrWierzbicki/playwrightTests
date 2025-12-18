@@ -8,9 +8,22 @@ The project demonstrates a professional approach to UI test automation:
 * Page Object Model (POM)
 * Reusable UI components (InventoryItem, CartItem, SelectContainer)
 * Business-focused scenarios (flows)
-* Optional GitHub Actions CI integration
+* GitHub Actions CI pipeline (API job + UI matrix + reports artifacts)
 
 ---
+
+## ✅ What this project demonstrates
+
+- Playwright E2E automation using TypeScript
+- Page Object Model (POM) and reusable UI components
+- API test automation using Playwright `request`
+- Separation of API and UI test layers
+- GitHub Actions CI with:
+  - separate API and UI jobs
+  - browser matrix (Chromium, Firefox, WebKit)
+  - HTML reports and test artifacts
+
+--- 
 
 ## 📁 Project structure
 
@@ -23,16 +36,16 @@ saucedemo-playwright/
   │   │   ├─ CartPage.ts
   │   │   ├─ CheckoutStepOnePage.ts
   │   │   └─ CheckoutStepTwoPage.ts
-  │   ├─ components/
-  │   │   ├─ InventoryItem.ts
-  │   │   ├─ CartItem.ts
-  │   │   └─ SelectContainer.ts
+  │   └─ components/
+  │       ├─ InventoryItem.ts
+  │       ├─ CartItem.ts
+  │       └─ SelectContainer.ts
   ├─ tests/
   |   ├─ api/
   │   │   └─ booking-crud.spec.ts  
-  |   ├─ e2e/
-  │   │   ├─ examples.spec.ts
-  │   │   └─ fixtures.ts
+  |   └─ e2e/
+  │       ├─ examples.spec.ts
+  │       └─ fixtures.ts
   ├─ playwright.config.ts
   └─ package.json
 ```
@@ -44,7 +57,7 @@ saucedemo-playwright/
 Install dependencies once:
 
 ```bash
-npm install
+npm ci
 ```
 
 Run all tests in headless mode:
@@ -76,6 +89,7 @@ Run only UI (E2E) tests:
 
 ```bash
 npx playwright test --project=chromium --project=firefox --project=webkit
+```
 
 ---
 
@@ -125,15 +139,9 @@ High-level business scenarios that use pages and components. Test files focus on
 
 ---
 
-## 📦 Installation
-
-```bash
-npm install
-```
-
----
-
 ## 🔌 API Tests
+
+API tests use project: api in playwright.config.ts
 
 This project also includes API tests for the Restful Booker API, located in:
 ```bash
@@ -165,15 +173,28 @@ npx playwright test tests/api/booking-crud.spec.ts --project=api
 
 ---
 
-## 🔄 CI / CD
+## 🔄 CI / CD (GitHub Actions)
 
-If Playwright GitHub Actions were enabled during project setup, a workflow file is available at:
+The project includes a full CI pipeline implemented with GitHub Actions.
 
-```text
-.github/workflows/playwright.yml
-```
+The pipeline consists of two separate jobs:
 
-This workflow runs tests automatically on every push.
+### API Tests
+- Runs Playwright API tests (Restful Booker)
+- Fast feedback layer
+- Executed before UI tests
+
+### UI E2E Tests
+- Runs Playwright E2E tests against Saucedemo
+- Executed in a browser matrix:
+  - Chromium
+  - Firefox
+  - WebKit
+- Runs only if API tests pass
+
+### Reports
+- Playwright HTML reports are uploaded as GitHub Actions artifacts
+- Test traces and screenshots are also available for failed runs
 
 ---
 
@@ -181,3 +202,22 @@ This workflow runs tests automatically on every push.
 
 The project uses a custom Playwright fixture (`loggedPage`) defined in `tests/e2e/fixtures.ts` to provide a pre-authenticated page instance for multiple tests.  
 This keeps test code clean and demonstrates knowledge of Playwright's fixture system.
+
+---
+
+## 🧰 Useful npm scripts
+
+Run all tests:
+```bash
+npm test
+```
+
+Run only API tests:
+```bash
+npm run test:api
+```
+
+Run only UI tests (Chromium):
+```bash
+npm run test:e2e
+```

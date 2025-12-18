@@ -8,15 +8,11 @@
     "test:e2e": "playwright test --project=chromium",
     "test:headed": "playwright test --headed",
     "test:ui": "playwright test --ui",
-    "codegen": "playwright codegen https://www.saucedemo.com/",
-    "start": "node app/server.js"
+    "codegen": "playwright codegen https://www.saucedemo.com/"
   },
   "devDependencies": {
     "@playwright/test": "^1.57.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.5.0"
-  },
-  "dependencies": {
-    "express": "^4.22.1"
   }
 }
